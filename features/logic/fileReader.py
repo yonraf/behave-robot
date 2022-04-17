@@ -1,4 +1,7 @@
 
+from re import S
+
+
 with open('features\logic\scenarios.bdd') as f:
 
     fileWriter = open("features\logic\scenarios.feature","w")
@@ -8,32 +11,43 @@ with open('features\logic\scenarios.bdd') as f:
 
     featureString = "Feature: Test\n"
 
-    fileWriter.write(featureString)
 
     for i in range(0,len(content)):
         line = content[i]
         if("which means" in line):
-            print()
+            pass
         elif(line.startswith('Scenario:')):
-            line = "    "+line
-            fileWriter.write(line)
-            print(line)
+            s = "Feature: " +line
+            fileWriter.write(s)
         elif(line.startswith('Given')):
-            # insert pass
-            print()
+            line = '    Scenario: '+line
+            fileWriter.write(line)
         elif(line.startswith('When')):
-            # insert pass
-            print()
+            s = '    Scenario: '+ line             
+            fileWriter.write(s)
         elif(line.startswith('Then')):
-            # insert pass
-
-            print()
+            s = '    Scenario: '+ line 
+            fileWriter.write(s)
         elif(line.startswith('//')):
-            print()
-            # insert pass
+            pass
+        elif(line.startswith('entity')):
+            pass
+        elif(line.startswith('model')):
+            pass
+        elif('actions' in line):
+            pass
+        elif('states' in line):
+            pass
+        elif('properties' in line):
+            pass
+        elif('}' in line):
+            pass
+        elif('/*' in line):
+            pass
+        elif('*/' in line):
+            pass
         else:
             fileWriter.write(line)
-            print(line)
     fileWriter.close()
 
             
