@@ -1,8 +1,8 @@
 class Robot:
     def __init__(self):
-         self.controller = None
-         self.receiver = None
-         self.io = None
+         self._controller = None
+         self._receiver = None
+         self._io = None
       
     # getter method
     def get_controller(self):
