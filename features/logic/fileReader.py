@@ -4,7 +4,7 @@ from re import S
 
 with open('features\logic\scenarios.bdd') as f:
 
-    fileWriter = open("features\logic\scenarios.feature","w")
+    fileWriter = open("features/tests.feature","w")
     content = f.readlines()
 
     inAWhichMeans = False
@@ -17,16 +17,17 @@ with open('features\logic\scenarios.bdd') as f:
         if("which means" in line):
             pass
         elif(line.startswith('Scenario:')):
-            s = "Feature: " +line
+            scenario = line.replace('"',"").replace("Scenario: ","")
+            s = "Feature: " + scenario
             fileWriter.write(s)
         elif(line.startswith('Given')):
-            line = '    Scenario: '+line
+            line = '\tScenario: '+line
             fileWriter.write(line)
         elif(line.startswith('When')):
-            s = '    Scenario: '+ line             
+            s = '\tScenario: '+ line             
             fileWriter.write(s)
         elif(line.startswith('Then')):
-            s = '    Scenario: '+ line 
+            s = '\tScenario: '+ line 
             fileWriter.write(s)
         elif(line.startswith('//')):
             pass
