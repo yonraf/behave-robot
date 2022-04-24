@@ -13,11 +13,8 @@ import rtde_io
 f = open("features\Environment.json")
 data = json.load(f)
 
-robot = Robot()
-ip = "192.168.29.128"
-robot.set_controller(rtde_control.RTDEControlInterface(ip))
-robot.set_receiver(rtde_receive.RTDEReceiveInterface(ip))
-rtde_io = rtde_io.RTDEIOInterface("192.168.29.128")
+
+
 
 
 # Get speed based naming (if not set, returns moderately)
@@ -65,8 +62,8 @@ def getLocation(name):
 def step_given(context, identifier : str, location):
 
     coordinates = getLocation(location)
-    if(robot.get_receiver().getActualQ() != coordinates):
-        robot.get_controller().moveJ(coordinates, getspeed(), getacceleration())
+    if(context.receiver.getActualQ() != coordinates):
+        context.controller.moveJ(coordinates, getspeed(), getacceleration())
 
 
 @given('the signal of the sensor "{identifier}" is "{state}"')
@@ -80,7 +77,13 @@ def step_given(context, identifier : str, state : str):
         #robot.get_receiver.getActualDigitalInputBits()
     '''
     
-
+@given('the robot "{identifier}" is connected')
+def step_given(context, identifier : str):
+    controller  = context.controller
+    if(controller.isConnected()):
+        return True
+    else: 
+        return False
 
 @given('the output "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
@@ -119,7 +122,8 @@ def step_when(context, identifier : str, state):
 def step_when(context, identifier : str, location):
 
     coordinates = getLocation(location)
-    controller = robot.get_controller()
+    controller = context.controller
+    
     
     time.sleep(2)
     
@@ -130,8 +134,8 @@ def step_when(context, identifier : str, location):
 def step_when(context, identifier : str, location):
 
     coordinates = getLocation(location)
-    controller = robot.get_controller()
-
+    controller = context.controller
+    
     time.sleep(2)
     
     controller.moveL_FK(coordinates, getspeed(), getacceleration())
@@ -140,7 +144,7 @@ def step_when(context, identifier : str, location):
 def step_when(context, identifier : str, location, speed : str):
 
     coordinates = getLocation(location)
-    controller = robot.get_controller()
+    controller = context.controller
     
     time.sleep(2)
     
@@ -150,7 +154,7 @@ def step_when(context, identifier : str, location, speed : str):
 def step_when(context, identifier : str, location, speed : str):
 
     coordinates = getLocation(location)
-    controller = robot.get_controller()
+    controller = context.controller
 
     time.sleep(2)
     
