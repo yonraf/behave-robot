@@ -1,105 +1,53 @@
-from mimetypes import init
-from turtle import pos
 from behave import when, given, then
-from numpy import result_type, sign
-import rtde_receive
-import rtde_control
-import json
-from robot import Robot
 import time
-import rtde_io
+from features import environment as env
 
+@given('the position of the robot "{identifier}" is "{position}"')
+def step_given(context, identifier : str, position):
 
-f = open("features\Environment.json")
-data = json.load(f)
-
-
-
-
-
-# Get speed based naming (if not set, returns moderately)
-def getspeed(identifier = "moderate"):
-    speed = data["Speeds"][identifier]["speed"]
-    return speed
-
-# Get acceleration based naming (if not set, returns moderately)
-def getacceleration(identifier  = "moderate"):
-    acceleration = data["Speeds"][identifier]["acceleration"]
-    return acceleration
-
-# Get IP-address of robot based on configured name
-def getRobotIP(name):
-    robotName = data["Robot"]["name"]
-    if (robotName == name):
-        ip = data["Robot"]["IP"]
-        return ip
-
-# Get input port based on configured name
-def getDigitalInput(name):
-    inputs = data["Robot"]["Digital inputs"]
-    for index in range(len(inputs)):
-        for key in inputs[index]:
-            if (name == inputs[index][key]):
-                return index
-
-# Get input port based on configured name
-def getDigitalOutput(name):
-    inputs = data["Robot"]["Digital outputs"]
-    for index in range(len(inputs)):
-        for key in inputs[index]:
-            if (name == inputs[index][key]):
-                return index
-
-# Get coordinate-location based on configured name
-def getLocation(name):
-    locations = data["Locations"]
-    coordinate = locations[name]
-
-    return coordinate
-
-
-@given('the position of the robot "{identifier}" is "{location}"')
-def step_given(context, identifier : str, location):
-
-    coordinates = getLocation(location)
-    if(context.receiver.getActualQ() != coordinates):
-        context.controller.moveJ(coordinates, getspeed(), getacceleration())
+    joint_positions = env.get_position(position)
+    if(context.receiver.getActualQ() != joint_positions):
+        context.controller.moveJ(joint_positions, env.get_speed(), env.get_acceleration())
 
 
 @given('the signal of the sensor "{identifier}" is "{state}"')
 def step_given(context, identifier : str, state : str):
     pass
-
     '''
+    sensor_state = (state == "ON")
+
     t_end = time.time() + 10
     while time.time() < t_end:
-        #TODO: how is it implemented?
-        #robot.get_receiver.getActualDigitalInputBits()
+
+        input_bits  = context.reciever.getActualDigitalInputBits()
+        actual_state = env.get_digital_input_state(env.get_digital_input(identifier), input_bits)
+
+        if actual_state == sensor_state :
+            assert True
+            break
+    
+    post_input_bits  = context.reciever.getActualDigitalInputBits()
+    post_state = env.get_digital_input_state(env.get_digital_input(identifier), input_bits)
+
+    if post_state != sensor_state :        
+        assert False
     '''
     
-@given('the robot "{identifier}" is connected')
-def step_given(context, identifier : str):
-    controller  = context.controller
-    if(controller.isConnected()):
-        return True
-    else: 
-        return False
 
 @given('the output "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
-    
-    signal = (state=="ON")
-    output = getDigitalOutput(identifier)
-    rtde_io.setStandardDigitalOut(output, signal)
+    signal = (state=="ON")  # True if state is ON, else False
+    output = env.get_digital_output(identifier)
+    context.io.setStandardDigitalOut(output, signal)
     
 
-
+#TODO
 @given('the gripper "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
     time.sleep(3)
     pass
     
-
+#TODO
 @when('the output "{identifier}" turns {state}')
 def step_when(context, identifier : str, state):
     time.sleep(3)
@@ -118,84 +66,91 @@ def step_when(context, identifier : str, state):
         assert False
     '''
 
-@when('the robot "{identifier}" moves to position "{location}"')
-def step_when(context, identifier : str, location):
+@when('the robot "{identifier}" moves to position "{position}"')
+def step_when(context, identifier : str, position):
 
-    coordinates = getLocation(location)
+    joint_position = env.get_position(position)
     controller = context.controller
     
     
     time.sleep(2)
     
-    controller.moveJ(coordinates, getspeed(), getacceleration())
+    controller.moveJ(joint_position, env.get_speed(), env.get_acceleration())
 
 
-@when('the robot "{identifier}" linearly moves to position "{location}"')
-def step_when(context, identifier : str, location):
+@when('the robot "{identifier}" linearly moves to position "{position}"')
+def step_when(context, identifier : str, position):
 
-    coordinates = getLocation(location)
+    joint_positions = env.get_position(position)
     controller = context.controller
     
     time.sleep(2)
     
-    controller.moveL_FK(coordinates, getspeed(), getacceleration())
+    controller.moveL_FK(joint_positions, env.get_speed(), env.get_acceleration())
 
-@when('the robot "{identifier}" moves to position "{location}" with "{speed}" speed')
-def step_when(context, identifier : str, location, speed : str):
+@when('the robot "{identifier}" moves to position "{position}" with "{speed}" speed')
+def step_when(context, identifier : str, position, speed : str):
 
-    coordinates = getLocation(location)
+    joint_positions = env.get_position(position)
     controller = context.controller
     
     time.sleep(2)
     
-    controller.moveJ(coordinates, getspeed(speed), getacceleration(speed))
+    controller.moveJ(joint_positions, env.get_speed(speed), env.get_acceleration(speed))
 
-@when('the robot "{identifier}" linearly moves to position "{location}" with "{speed}" speed')
-def step_when(context, identifier : str, location, speed : str):
+@when('the robot "{identifier}" linearly moves to position "{position}" with "{speed}" speed')
+def step_when(context, identifier : str, position, speed : str):
 
-    coordinates = getLocation(location)
+    joint_positions = env.get_position(position)
     controller = context.controller
 
     time.sleep(2)
     
-    controller.moveL_FK(coordinates, getspeed(speed), getacceleration(speed))
+    controller.moveL_FK(joint_positions, env.get_speed(speed), env.get_acceleration(speed))
 
+#TODO
 @when('the gripper "{identifier}" {action}')
 def step_then(context, identifier : str, action):
     time.sleep(3)
     pass
 
-@then('the position of the robot "{identifier}" is "{location}"')
-def step_then(context, identifier : str, location):
+@then('the position of the robot "{identifier}" is "{position}"')
+def step_then(context, identifier : str, position):
     time.sleep(1)
-    pass
-
-@then('the robot "{identifier}" is moved')
-def step_then(context, identifier : str):
-    time.sleep(3)
     pass
 
 @then('the signal of the sensor "{identifier}" is "{state}"')
 def step_then(context, identifier : str, state):
-    time.sleep(3)
     pass
-
     '''
+    sensor_state = (state == "ON")
+
     t_end = time.time() + 10
     while time.time() < t_end:
-        #TODO: how is it implemented?
-        #robot.get_receiver.getActualDigitalInputBits()
-    '''
 
+        input_bits  = context.reciever.getActualDigitalInputBits()
+        actual_state = env.get_digital_input_state(env.get_digital_input(identifier), input_bits)
+
+        if actual_state == sensor_state :
+            assert True
+            break
+    
+    post_input_bits  = context.reciever.getActualDigitalInputBits()
+    post_state = env.get_digital_input_state(env.get_digital_input(identifier), input_bits)
+
+    if post_state != sensor_state :        
+        assert False
+    '''
 
 @then('the output "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
     signal = (state=="ON")
-    output = getDigitalOutput(identifier)
-    rtde_io.setStandardDigitalOut(output, signal)
+    output = env.getDigitalOutput(identifier)
+    context.io.setStandardDigitalOut(output, signal)
 
-
+#TODO
 @then('the gripper "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
     time.sleep(3)
     pass
+
