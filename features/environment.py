@@ -19,6 +19,7 @@ def before_feature(context, feature):
 
     # initialize gripper
     context.gripper = RobotiqGripper(context.controller)
+    context.gripper.activate()
     context.gripper.set_speed(get_gripper_speed())
     context.gripper.set_force(get_gripper_force())
 
