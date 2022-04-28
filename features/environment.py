@@ -1,20 +1,27 @@
-import time
 from behave import fixture
 import rtde_receive
 import rtde_control
 import rtde_io
 import json
-from steps.robot import Robot
+from logic.sdu_robotics.robotiq_gripper_control import RobotiqGripper
 
 f = open("features\Environment.json")
 data = json.load(f)
         
+
 def before_feature(context, feature): 
     ip = get_robot_ip("John Doe")
     
+    # initialize interfaces
     context.controller = rtde_control.RTDEControlInterface(ip)
     context.receiver = rtde_receive.RTDEReceiveInterface(ip)
     context.io = rtde_io.RTDEIOInterface(ip)
+
+    # initialize gripper
+    context.gripper = RobotiqGripper(context.controller)
+    context.gripper.set_speed(get_gripper_speed())
+    context.gripper.set_force(get_gripper_force())
+
 
     context.controller.moveJ(get_position("default"), get_speed(), get_acceleration())
 
@@ -66,6 +73,16 @@ def get_position(name):
     coordinate = locations[name]
 
     return coordinate
+
+# Get speed of gripper
+def get_gripper_speed():
+    speed = data["Gripper"]["speed"]
+    return speed
+
+# Get force of gripper
+def get_gripper_force():
+    force = data["Gripper"]["force"]
+    return force
 
 # Converts the bits from getActualDigitalInputBits() to an array with state of each input
 def converter(bit):

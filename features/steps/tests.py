@@ -41,13 +41,16 @@ def step_then(context, identifier : str, state):
     context.io.setStandardDigitalOut(output, signal)
     
 
-#TODO
+#TODO test it
 @given('the gripper "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
-    time.sleep(3)
-    pass
+    desired_state_open = (state=="opened")
+    if (desired_state_open):
+        context.gripper.open()
+    else:
+        context.gripper.close()
     
-#TODO
+    
 @when('the output "{identifier}" turns {state}')
 def step_when(context, identifier : str, state):
     time.sleep(3)
@@ -108,11 +111,14 @@ def step_when(context, identifier : str, position, speed : str):
     
     controller.moveL_FK(joint_positions, env.get_speed(speed), env.get_acceleration(speed))
 
-#TODO
+#TODO : test it
 @when('the gripper "{identifier}" {action}')
 def step_then(context, identifier : str, action):
-    time.sleep(3)
-    pass
+    desired_action_open = (action=="opens")
+    if (desired_action_open):
+        context.gripper.open()
+    else:
+        context.gripper.close()
 
 @then('the position of the robot "{identifier}" is "{position}"')
 def step_then(context, identifier : str, position):
@@ -148,9 +154,12 @@ def step_then(context, identifier : str, state):
     output = env.getDigitalOutput(identifier)
     context.io.setStandardDigitalOut(output, signal)
 
-#TODO
+#TODO test it
 @then('the gripper "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
-    time.sleep(3)
-    pass
+    desired_state_open = (state=="opened")
+    if (desired_state_open):
+        context.gripper.open()
+    else:
+        context.gripper.close()
 
