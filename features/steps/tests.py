@@ -53,21 +53,11 @@ def step_then(context, identifier : str, state):
     
 @when('the output "{identifier}" turns {state}')
 def step_when(context, identifier : str, state):
-    time.sleep(3)
-    pass
-    '''
-    index = getDigitalInput(identifier)
-    if(index != -1):
-        robot.get_io.setStandardDigital(7, False)
-        robot.get_io().setToolDigitalOut(0, False)
-        time.sleep(0.01)
-        
-        
-        print("Turned off")
-    else:
-        print(identifier +" is not connected")
-        assert False
-    '''
+    
+    signal = (state=="ON")  # True if state is ON, else False
+    output = env.get_digital_output(identifier)
+    context.io.setStandardDigitalOut(output, signal)
+
 
 @when('the robot "{identifier}" moves to position "{position}"')
 def step_when(context, identifier : str, position):
