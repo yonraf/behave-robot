@@ -10,6 +10,8 @@ data = json.load(f)
         
 
 def before_feature(context, feature): 
+    print("Setting up Environment...")
+
     ip = get_robot_ip("John Doe")
     
     # initialize interfaces
@@ -17,12 +19,13 @@ def before_feature(context, feature):
     context.receiver = rtde_receive.RTDEReceiveInterface(ip)
     context.io = rtde_io.RTDEIOInterface(ip)
 
+    '''
     # initialize gripper
     context.gripper = RobotiqGripper(context.controller)
     context.gripper.activate()
     context.gripper.set_speed(get_gripper_speed())
     context.gripper.set_force(get_gripper_force())
-
+    '''
 
     context.controller.moveJ(get_position("default"), get_speed(), get_acceleration())
 

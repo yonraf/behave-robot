@@ -8,7 +8,8 @@ def main():
     readFile()
     time.sleep(2)
     path = os.path.join(os.path.dirname(__file__))
-    print(path)
+    
+    # Starts test
     behave_main([path])
 
 if __name__ == '__main__':
