@@ -12,20 +12,20 @@ data = json.load(f)
 def before_feature(context, feature): 
     print("Setting up Environment...")
 
-    ip = get_robot_ip("John Doe")
+    ip = get_robot_ip()
     
     # initialize interfaces
     context.controller = rtde_control.RTDEControlInterface(ip)
     context.receiver = rtde_receive.RTDEReceiveInterface(ip)
     context.io = rtde_io.RTDEIOInterface(ip)
 
-    '''
+    
     # initialize gripper
     context.gripper = RobotiqGripper(context.controller)
     context.gripper.activate()
     context.gripper.set_speed(get_gripper_speed())
     context.gripper.set_force(get_gripper_force())
-    '''
+    
 
     context.controller.moveJ(get_position("default"), get_speed(), get_acceleration())
 
@@ -49,11 +49,9 @@ def get_acceleration(identifier  = "moderate"):
     return acceleration
 
 # Get IP-address of robot based on configured name
-def get_robot_ip(name):
-    robotName = data["Robot"]["name"]
-    if (robotName == name):
-        ip = data["Robot"]["IP"]
-        return ip
+def get_robot_ip():
+    ip = data["Robot"]["IP"]
+    return ip
 
 # Get input port based on configured name
 def get_digital_input(name):
