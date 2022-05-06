@@ -53,10 +53,9 @@ def step_then(context, identifier : str, state):
         context.gripper.close()
     
     
-@when('the output "{identifier}" turns {state}')
+@when('the output "{identifier}" {state}')
 def step_when(context, identifier : str, state):
-    
-    signal = (state=="ON")  # True if state is ON, else False
+    signal = (state=="activates")  # True if state is activates, else False
     output = env.get_digital_output(identifier)
     context.io.setStandardDigitalOut(output, signal)
 
@@ -67,9 +66,6 @@ def step_when(context, identifier : str, position):
     joint_position = env.get_position(position)
     controller = context.controller
     
-    
-    time.sleep(2)
-    
     controller.moveJ(joint_position, env.get_speed(), env.get_acceleration())
 
 
@@ -79,8 +75,6 @@ def step_when(context, identifier : str, position):
     joint_positions = env.get_position(position)
     controller = context.controller
     
-    time.sleep(2)
-    
     controller.moveL_FK(joint_positions, env.get_speed(), env.get_acceleration())
 
 @when('the robot "{identifier}" moves to position "{position}" with "{speed}" speed')
@@ -89,8 +83,6 @@ def step_when(context, identifier : str, position, speed : str):
     joint_positions = env.get_position(position)
     controller = context.controller
     
-    time.sleep(2)
-    
     controller.moveJ(joint_positions, env.get_speed(speed), env.get_acceleration(speed))
 
 @when('the robot "{identifier}" linearly moves to position "{position}" with "{speed}" speed')
@@ -98,8 +90,6 @@ def step_when(context, identifier : str, position, speed : str):
 
     joint_positions = env.get_position(position)
     controller = context.controller
-
-    time.sleep(2)
     
     controller.moveL_FK(joint_positions, env.get_speed(speed), env.get_acceleration(speed))
 
@@ -117,7 +107,6 @@ def step_then(context, identifier : str, action):
 
 @then('the position of the robot "{identifier}" is "{position}"')
 def step_then(context, identifier : str, position):
-    time.sleep(1)
     pass
 
 @then('the signal of the sensor "{identifier}" is "{state}"')
