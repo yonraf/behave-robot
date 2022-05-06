@@ -4,22 +4,26 @@
 
 Feature: Moving product from conveyor 1 to conveyor 2
 
-	Scenario: Given the product "Box" is present
-        Given the signal of the sensor "sensor 1" is "OFF"
-        When the output "conveyor 1" turns ON
-        Then the signal of the sensor "sensor 1" is "ON"
+	Scenario: Given the item "lego" is assembled
+        Given the output "active light" is OFF
+        And the signal of the input "ready" is "ON"
+        And the gripper "two-finger" is opened
+        When the output "active light" turns ON
+        And the robot "Assembler" moves to position "above point 2"
+        And the robot "Assembler" linearly moves to position "point 2"
+        And the gripper "two-finger" closes
+        And the robot "Assembler" moves to position "point 1" with "fast" speed
+        Then the gripper "two-finger" is opened
 
-	Scenario: When the packager #1 pick up the product "Box"
-        Given the position of the robot "John Doe" is "above conveyor 1"
-        When the robot "John Doe" linearly moves to position "conveyor 1" with "slow" speed
+	Scenario: When the assembler #1 inserts the item "block"
+        Given the position of the robot "Assembler" is "above point 3"
+        And the gripper "two-finger" is opened
+        When the robot "Assembler" linearly moves to position "point 3" with "slow" speed
         And the gripper "Two-finger" closes
-        And the robot "John Doe" moves to position "above conveyor 2"
-        Then the signal of the sensor "sensor 1" is "OFF"
+        And the robot "Assembler" moves to position "above point 1" with "fast" speed
+        Then the gripper "two-finger" is opened
 
-	Scenario: Then the conveyor 2 is loaded
-        Given the position of the robot "John Doe" is "above conveyor 2"
-        And the output "conveyor 2" is OFF
-        And the signal of the sensor "sensor 2" is "OFF"
-        When the robot "John Doe" linearly moves to position "conveyor 2" with "slow" speed
-        And the gripper "Two-finger" opens
-        Then the signal of the sensor "conveyor 2" is "ON"
+	Scenario: Then the item assembling is done
+        Given the signal of the input "done" is "ON"
+        When the robot "Assembler" moves to position "default" with "fast" speed
+        Then the output "active light" is OFF
