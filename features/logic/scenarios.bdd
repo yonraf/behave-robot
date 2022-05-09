@@ -1,30 +1,23 @@
 model sample using widgets
 
-entity product {
-	actions: pickup, move
-	states: present, lifted, ready
+entity item {
+	states: assembled, ready
 }
 
-entity conveyor {
-    actions: void
-    states: clear, loaded
-    properties: void
-}
-entity packager {
-    actions: pickup
-    states: playing, paused, available
-    properties: size
+entity assembler {
+	actions: inserts
 }
 
 
-Scenario: "Moving product from conveyor 1 to conveyor 2"
+
+Scenario: "Assembling Lego"
 Given the item "lego" is assembled
     which means
         Given the output "active light" is OFF
-        And the signal of the input "ready" is "ON"
         And the gripper "two-finger" is opened
-        When the output "active light" turns ON
-        And the robot "Assembler" moves to position "above point 2"
+        And the signal of the input "ready" is "ON"
+        When the output "active light" activates
+        And the robot "Assembler" moves to position "above point 2" 
         And the robot "Assembler" linearly moves to position "point 2"
         And the gripper "two-finger" closes
         And the robot "Assembler" moves to position "point 1" with "fast" speed
@@ -37,7 +30,7 @@ When the assembler #1 inserts the item "block"
         And the gripper "Two-finger" closes
         And the robot "Assembler" moves to position "above point 1" with "fast" speed
         Then the gripper "two-finger" is opened
-Then the item assembling is done
+Then the item "assembling" is ready
     which means
         Given the signal of the input "done" is "ON"
         When the robot "Assembler" moves to position "default" with "fast" speed

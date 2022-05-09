@@ -14,10 +14,10 @@
                 {"input 7" : null}
             ],
             "Digital outputs" : [
-                {"output 0" : "active light"},
+                {"output 0" : null},
                 {"output 1" : null},
                 {"output 2" : null},
-                {"output 3" : null},
+                {"output 3" : "active light"},
                 {"output 4" : null},
                 {"output 5" : null},
                 {"output 6" : null},

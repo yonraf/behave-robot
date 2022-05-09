@@ -2,16 +2,16 @@ from behave import when, given, then
 import time
 from features import environment as env
 
-@then('the position of the robot "{identifier}" is "{position}"')
-@given('the position of the robot "{identifier}" is "{position}"')
+@then('the position {prep} the robot "{identifier}" is "{position}"')
+@given('the position {prep} the robot "{identifier}" is "{position}"')
 def step_given(context, identifier : str, position):
 
     joint_positions = env.get_position(position)
     if(context.receiver.getActualQ() != joint_positions):
         context.controller.moveJ(joint_positions, env.get_speed(), env.get_acceleration())
 
-@then('the signal of the input "{identifier}" is "{state}"')
-@given('the signal of the input "{identifier}" is "{state}"')
+@then('the signal {prep} the input "{identifier}" is "{state}"')
+@given('the signal {prep} the input "{identifier}" is "{state}"')
 def step_given(context, identifier : str, state : str):
     input_state = (state == "ON")
     detected = False
@@ -37,10 +37,10 @@ def step_given(context, identifier : str, state : str):
 @then('the output "{identifier}" is {state}')
 @given('the output "{identifier}" is {state}')
 def step_then(context, identifier : str, state):
-   # signal = (state=="ON")  # True if state is ON, else False
-   # output = env.get_digital_output(identifier)
-   # context.io.setStandardDigitalOut(output, signal)
-    pass
+   signal = (state=="ON")  # True if state is ON, else False
+   output = env.get_digital_output(identifier)
+   context.io.setStandardDigitalOut(output, signal)
+
 
 
 @then('the gripper "{identifier}" is {state}')
